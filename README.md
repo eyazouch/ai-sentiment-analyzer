@@ -348,11 +348,14 @@ ai-sentiment-analyzer/
 
 ---
 
-## 👥 Auteur
+## 👥 Auteurs
 
 **Eya Zouch**
 - GitHub: [@eyazouch](https://github.com/eyazouch)
-- Projet: Cours NoSQL
+**Ahmed Messoudi**
+- GitHub: 
+
+
 
 ---
 
