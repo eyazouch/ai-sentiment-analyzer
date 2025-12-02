@@ -352,6 +352,7 @@ ai-sentiment-analyzer/
 
 **Eya Zouch**
 - GitHub: [@eyazouch](https://github.com/eyazouch)
+
 **Ahmed Messoudi**
 - GitHub: 
 
