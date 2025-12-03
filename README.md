@@ -197,7 +197,7 @@ docker-compose up -d
 
 ```powershell
 # 1. Naviguer vers le projet
-cd C:\Users\AHMED\OneDrive\Desktop\ai-sentiment-analyzer
+cd *your directory*\ai-sentiment-analyzer
 
 # 2. Créer l'environnement virtuel Python
 python -m venv venv
