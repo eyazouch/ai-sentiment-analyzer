@@ -30,7 +30,9 @@ services:
     restart: unless-stopped
 
   logstash:
-    image: docker.elastic.co/logstash/logstash:8.11.0
+    build:
+      context: .
+      dockerfile: Dockerfile.logstash
     container_name: sentiment_logstash
     ports:
       - "5000:5000"
@@ -38,8 +40,10 @@ services:
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
       - ./logstash/config:/usr/share/logstash/config
+      - ./data/logstash-mongodb:/tmp/logstash-mongodb
     networks:
       - sentiment_network
+    user: "0:0"
     depends_on:
       - elasticsearch
       - mongodb

@@ -1,0 +1,7 @@
+FROM docker.elastic.co/logstash/logstash:8.13.0
+
+# Create the required directory
+RUN mkdir -p /tmp/logstash-mongodb && chmod 777 /tmp/logstash-mongodb
+
+RUN rm -f /usr/share/logstash/pipeline/logstash.conf
+RUN logstash-plugin install logstash-input-mongodb
