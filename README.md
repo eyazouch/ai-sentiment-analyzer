@@ -193,20 +193,101 @@ docker-compose up -d
 
 ## 🚀 Utilisation
 
-### Workflow complet
+### Configuration initiale (une seule fois)
 
-```bash
+```powershell
+# 1. Naviguer vers le projet
+cd C:\Users\AHMED\OneDrive\Desktop\ai-sentiment-analyzer
+
+# 2. Créer l'environnement virtuel Python
+python -m venv venv
+
+# 3. Activer l'environnement virtuel
+.\venv\Scripts\Activate  # Windows PowerShell
+# source venv/bin/activate  # Mac/Linux
+
+# 4. Installer toutes les dépendances
+.\venv\Scripts\pip install -r requirements.txt
+
+# 5. Télécharger les modèles linguistiques NLP
+.\venv\Scripts\python -m textblob.download_corpora
+
+# 6. Démarrer l'infrastructure Docker
+docker-compose up -d
+
+# 7. Attendre 30 secondes que tout démarre
+# Vérifier que les 4 containers sont actifs:
+docker-compose ps
+```
+
+### Pipeline de données (workflow principal)
+
+**⚠️ Important:** Exécuter ces commandes dans l'ordre !
+
+```powershell
+# Activer l'environnement virtuel (si pas déjà fait)
+.\venv\Scripts\Activate
+
 # Étape 1 : Générer 3000 posts simulés
-python data/data_generator.py
+.\venv\Scripts\python data\data_generator.py
+# ✅ Crée 3000 posts sur les outils IA dans MongoDB
 
 # Étape 2 : Analyser les sentiments (NLP)
-python analysis/sentiment_analyzer.py
+.\venv\Scripts\python analysis\sentiment_analyzer.py
+# ✅ Analyse chaque post avec TextBlob + VADER
 
 # Étape 3 : Transférer vers Elasticsearch
-python scripts/mongodb_to_elasticsearch.py
+.\venv\Scripts\python scripts\mongodb_to_elasticsearch.py
+# ✅ Indexe les données pour Kibana
 
 # Étape 4 : Visualiser dans Kibana
-# Ouvrir http://localhost:5601
+# Ouvrir http://localhost:5601 dans votre navigateur
+```
+
+### Configuration de Kibana (première utilisation)
+
+1. **Ouvrir Kibana** : http://localhost:5601
+
+2. **Créer une Data View** :
+   - Menu ☰ → Management → Stack Management
+   - Kibana → Data Views → Create data view
+   - **Index pattern** : `ai-sentiment-*`
+   - **Timestamp field** : `@timestamp`
+   - Cliquer sur "Save data view to Kibana"
+
+3. **Explorer les données** :
+   - Menu ☰ → Analytics → Discover
+   - Sélectionner "AI Sentiment Analysis"
+   - **Ajuster le filtre temporel** : Cliquer "Last 15 minutes" → Choisir "Last 30 days"
+   - Vous devriez voir **3000 documents** !
+
+4. **Créer des visualisations** :
+   - Menu ☰ → Analytics → Visualize Library
+   - Exemples :
+     - Pie chart : Distribution des sentiments
+     - Bar chart : Top outils IA
+     - Line chart : Évolution temporelle
+
+### Commandes utiles
+
+```powershell
+# Vérifier les données dans MongoDB
+docker exec -it sentiment_mongodb mongosh social_sentiment --eval "db.posts.countDocuments()"
+
+# Vérifier les données dans Elasticsearch
+Invoke-WebRequest -Uri "http://localhost:9200/ai-sentiment-*/_count" -UseBasicParsing | Select-Object -ExpandProperty Content
+
+# Voir les logs Logstash
+docker logs sentiment_logstash --tail 50
+
+# Redémarrer un service
+docker-compose restart logstash
+
+# Effacer toutes les données MongoDB
+docker exec -it sentiment_mongodb mongosh social_sentiment --eval "db.posts.deleteMany({})"
+
+# Effacer les indices Elasticsearch
+Invoke-WebRequest -Method DELETE -Uri "http://localhost:9200/ai-sentiment-*"
 ```
 
 ---
